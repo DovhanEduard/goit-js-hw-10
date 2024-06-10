@@ -24,12 +24,12 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    startBtn.disabled = true;
-
     const currentDate = Date.now();
     const chosenDate = selectedDates[0].getTime();
 
     if (chosenDate < currentDate) {
+      startBtn.disabled = true;
+
       iziToast.show({
         messageColor: '#fff',
         backgroundColor: 'red',
