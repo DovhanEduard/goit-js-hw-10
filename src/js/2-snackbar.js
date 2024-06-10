@@ -4,18 +4,18 @@ import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
 const form = document.querySelector('.form');
-const inputDelay = form.elements.delay;
 const radioBtnFulfilled = form.querySelector('[value="fulfilled"]');
 const radioBtnRejected = form.querySelector('[value="rejected"]');
 
-form.addEventListener('submit', e => {
-  e.preventDefault();
+form.addEventListener('submit', event => {
+  event.preventDefault();
 
-  const delay = inputDelay.value;
+  const {
+    delay: { value: delayValue },
+    state: { value: selectedAction },
+  } = event.target.elements;
 
-  const state = radioBtnFulfilled.checked;
-
-  promiseGenerator(delay, state)
+  promiseGenerator(delayValue, selectedAction)
     .then(ms => {
       iziToast.show({
         messageColor: '#fff',
@@ -24,7 +24,7 @@ form.addEventListener('submit', e => {
         message: `✅ Fulfilled promise in ${ms}ms`,
       });
     })
-    .catch((ms) => {
+    .catch(ms => {
       iziToast.show({
         messageColor: '#fff',
         backgroundColor: ' #ef4040',
@@ -32,19 +32,20 @@ form.addEventListener('submit', e => {
         message: `❌ Rejected promise in ${ms}ms`,
       });
     });
+
   form.reset();
 });
 
-function promiseGenerator(ms, state) {
+function promiseGenerator(ms, selectedAction) {
   return new Promise((resolve, reject) => {
-    if (state) {
-      setTimeout(() => {
-        resolve(ms);
-      }, ms);
-    } else {
-      setTimeout(() => {
-        reject(ms);
-      }, ms);
-    }
+    const actionCallbackMap = {
+      [radioBtnFulfilled.value]: resolve,
+      [radioBtnRejected.value]: reject,
+    };
+
+    setTimeout(() => {
+      actionCallbackMap[selectedAction] &&
+        actionCallbackMap[selectedAction](ms);
+    }, ms);
   });
 }

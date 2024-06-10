@@ -25,7 +25,7 @@ const options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
     const currentDate = Date.now();
-    const chosenDate = selectedDates[0].getTime();
+    const chosenDate = selectedDates[0];
 
     if (chosenDate < currentDate) {
       startBtn.disabled = true;
